@@ -19,9 +19,14 @@ public class Code {
            result.add(new ArrayList<>(subSet));
             return;
         }
+        //to exclude index while making choice
         sS(arr, result, subSet, i + 1);
+
+         //to include index while making choice
         subSet.add(arr[i]);
         sS(arr, result, subSet, i + 1);
+
+        //removing last element from subset while backtracking 
         subSet.remove(subSet.size()-1);
         
         
