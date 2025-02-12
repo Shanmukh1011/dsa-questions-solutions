@@ -4,16 +4,18 @@ import java.util.*;
 public class Code {
 
     public static void main(String[] args) {
+        
         int arr[] = {1, 2, 3};
         List<List<Integer>> result = new ArrayList<>();
 
-        sS(arr, result, new ArrayList<>(), 0);
+        sS(arr, result, new ArrayList<>(), 0,);
         System.out.println(result);
 
     }
 
     public static void sS(int arr[], List<List<Integer>> result, List<Integer> subSet, int i) {
-        if(i==3){
+        int n = arr.length;
+        if(i==n){
            result.add(new ArrayList<>(subSet));
             return;
         }
