@@ -25,10 +25,10 @@ public class Code{
 
         while(i <=mid&& j <= ei){
             if(arr[i]<=arr[j]){
-                temp[k]=arr[i];
+                temp[k]=arr[i]; // or keep i++ directly
                 i++;
             }else{
-                temp[k]=arr[j];
+                temp[k]=arr[j]; // or keep j++ directly
                 j++;
             }
             k++;
