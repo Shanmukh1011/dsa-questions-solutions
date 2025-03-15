@@ -1,209 +1,172 @@
 import java.util.*;
-public class Main{
-    static class Node{
+
+public class Main {
+    // Definition of a Node in a Binary Search Tree (BST)
+    static class Node {
         int data;
         Node left;
         Node right;
-        public Node(int data){
-            this.data = data;
-            this.left = null;
-            this.right = null;
-        }
 
+        Node(int data) {
+            this.data = data;
+            this.right = null;
+            this.left = null;
+        }
     }
 
-    public static Node insert(Node root,int val){
-        if(root == null){
-            root =  new Node(val);
-            return root;//forget to return the root
+    // Function to insert a value into the BST
+    public static Node insert(Node root, int val) {
+        if (root == null) {
+            return new Node(val); // Create a new node if root is null
         }
-        if(root.data > val){// carefull with <,> symboles..
-            // left subtree
-            root.left = insert(root.left,val);
-        }else{
-            // right subtree
-            root.right = insert(root.right,val);
-
+        if (root.data > val) {
+            root.left = insert(root.left, val); // Insert into left subtree
+        } else {
+            root.right = insert(root.right, val); // Insert into right subtree
         }
         return root;
-
     }
 
+    // Function to perform In-Order Traversal (Left, Root, Right)
     public static void inOrder(Node root) {
         if (root == null) {
             return;
         }
         inOrder(root.left);
-        System.out.print(root.data + " ");
+        System.out.print(root.data + " "); // Print node data
         inOrder(root.right);
     }
 
-    public static boolean search(Node root,int key){//O(H)
-        if(root == null){
+    // Function to search for a value in the BST
+    public static boolean search(Node root, int key) {
+        if (root == null) {
             return false;
         }
-        if(root.data == key){
-            return true;
+        if (root.data == key) {
+            return true; // Found the key
         }
-        if(root.data > key){
-            return search(root.left,key);// forget to return..
-        }
-        else{
-           return  search(root.right,key);// forget to add return..
-        }
-
+        return root.data > key ? search(root.left, key) : search(root.right, key);
     }
 
-    public static Node delete(Node root,int val){
-        if(root.data > val){
-            root.left = delete(root.left,val);
+    // Function to delete a node from BST
+    public static Node delete(Node root, int key) {
+        if (root == null) {
+            return null;
         }
-        else if(root.data < val){
-            root.right = delete(root.right,val);
-        }else{
-           // leaf node
-            if(root.left == null && root.right == null){
-                return  null;
+        if (root.data > key) {
+            root.left = delete(root.left, key); // Delete from left subtree
+        } else if (root.data < key) {
+            root.right = delete(root.right, key); // Delete from right subtree
+        } else {
+            // Case 1: Node has no child
+            if (root.left == null && root.right == null) {
+                return null;
             }
-            //sing child case..
-            if(root.left == null){
+            // Case 2: Node has one child
+            else if (root.left == null) {
                 return root.right;
-            }else if(root.right == null){
+            } else if (root.right == null) {
                 return root.left;
             }
+            // Case 3: Node has two children
+            Node IS = inOrderSuccessor(root.right); // Get in-order successor
+            root.data = IS.data; // Replace node data with successor data
+            root.right = delete(root.right, IS.data); // Delete successor
+        }
+        return root;
+    }
 
-            // case 3 -- 2 children exists
-            Node IS = findInorderSuccessor(root.right);//left most node in the right subtree;
-            root.data  = IS.data;// stors is data in root data
-            root.right = delete(root.right,IS.data);
+    // Function to find the in-order successor (smallest node in right subtree)
+    public static Node inOrderSuccessor(Node root) {
+        while (root.left != null) {
+            root = root.left;
         }
         return root;
     }
-    public static Node findInorderSuccessor(Node root){
-        // run a loop until the root.left becomes null and return the root;
-        while(root.left != null){
-            root = root.left;// didn't understood the logic of assigining here...
-        }
-        return root;
-    }
-    public static void printInRange(Node root,int k1,int k2){
-        if(root == null){
+
+    // Function to print nodes within a given range [k1, k2]
+    public static void printInRange(Node root, int k1, int k2) {
+        if (root == null) {
             return;
         }
-        if(k1 <= root.data && root.data <=k2){
-            printInRange(root.left,k1,k2);
+        if (k1 <= root.data && root.data <= k2) {
+            printInRange(root.left, k1, k2);
             System.out.print(root.data + " ");
-            printInRange(root.right,k1,k2);
-
-
-        }else if(root.data > k2){
-            printInRange(root.left,k1,k2);
-
-        }else{
-            printInRange(root.right,k1,k2);;
+            printInRange(root.right, k1, k2);
+        } else if (root.data > k2) {
+            printInRange(root.left, k1, k2);
+        } else {
+            printInRange(root.right, k1, k2);
         }
     }
-    public static void printPath(ArrayList<Integer> path){
-        for(int i = 0;i < path.size();i++){
-            System.out.print(path.get(i) + "->");
-        }
-        System.out.println("Null");
 
-
-    }
-    public static void printRoot2Leaf(Node root,ArrayList<Integer> path){
-        if(root == null){
+    // Function to print root-to-leaf paths
+    public static void root2leaf(Node root, ArrayList<Node> path) {
+        if (root == null) {
             return;
         }
-        path.add(root.data);// forget to add data..
-        if(root.left == null && root.right == null){
+        path.add(root);
+        if (root.left == null && root.right == null) {
             printPath(path);
+            path.remove(path.size() - 1);
+            return;
         }
-        printRoot2Leaf(root.left, path);;
-        printRoot2Leaf(root.right,path);;
-        path.remove(path.size()-1); //forgot to remove data...
+        root2leaf(root.left, path);
+        root2leaf(root.right, path);
+        path.remove(path.size() - 1);
     }
 
-    public static boolean isValiedBST(Node root,Node min,Node max){
-        if(root == null){
-            return true;
+    // Helper function to print the path
+    public static void printPath(ArrayList<Node> path) {
+        for (Node node : path) {
+            System.out.print(node.data + " ");
         }
-        if(min!=null && root.data <= min.data){
-            return false;
-
-        }
-        else if(max !=null && root.data >= max.data){
-            return  false;
-        }
-        return isValiedBST(root.left,min,root) && isValiedBST(root.right,root,max);
+        System.out.println();
     }
-    public static Node mirrorBST(Node root) {
+
+    // Function to mirror a tree (swap left and right subtrees)
+    public static Node mirrorTree(Node root) {
         if (root == null) {
             return null;
         }
         Node temp = root.right;
         root.right = root.left;
         root.left = temp;
-
-
-
-        mirrorBST(root.left);
-        mirrorBST(root.right);
-
-    return root;
-    }
-    public static Node mirrorBTS2 (Node root){
-        if(root == null){
-            return null;
-        }
-        Node leftMirror = mirrorBTS2(root.left);
-        Node rightMirror = mirrorBTS2(root.right);
-
-        root.left = rightMirror;
-        root.right = leftMirror;
-
+        root.left = mirrorTree(root.left);
+        root.right = mirrorTree(root.right);
         return root;
     }
-    public static void preOrder(Node root){
-        if(root == null){
-            return;
+
+    // Function to check if a tree is a valid BST using min-max approach
+    public static boolean isValidBST(Node root, Node min, Node max) {
+        if (root == null) {
+            return true;
         }
-        System.out.print(root.data + " ");
-        preOrder(root.left);
-        preOrder(root.right);
+        if (min != null && root.data <= min.data) {
+            return false; // Violates BST property
+        }
+        if (max != null && root.data >= max.data) {
+            return false; // Violates BST property
+        }
+        return isValidBST(root.left, min, root) && isValidBST(root.right, root, max);
     }
 
-
+    // Main function to test the BST operations
     public static void main(String[] args) {
-        int values[] = {8,5,3,1,4,6,10,11,14};
+        int values[] = {5, 1, 3, 4, 2, 7};
         Node root = null;
 
-        // loop for to add valuse in tree in the form of bst
-        for(int i = 0;i < values.length;i++){
-           root =  insert(root,values[i]);//forget the storage of value in root
+        // Insert values into BST
+        for (int val : values) {
+            root = insert(root, val);
         }
-        //inOrder(root);
-        System.out.println();
-//
-//        ArrayList<Integer> a = new ArrayList<>();
-//
-//        printInRange(root,5,11);
-//       // printRoot2Leaf(root,a);
-//        if(isValiedBST(root,null,null)){
-//            System.out.println("vallied ");
-//        }else{
-//            System.out.println("unvallied");
-//        }
-        preOrder(root);
-       root = mirrorBST(root);
-        System.out.println();
-        preOrder(root);
 
+        // Print In-Order Traversal
+        System.out.print("In-Order Traversal: ");
+        inOrder(root);
         System.out.println();
 
-        preOrder(root);
-        root = mirrorBTS2(root);
-        System.out.println();
-        preOrder(root);
+        // Check if the tree is a valid BST
+        System.out.println("Is valid BST: " + isValidBST(root, null, null));
     }
 }
