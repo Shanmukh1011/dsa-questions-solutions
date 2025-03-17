@@ -170,3 +170,173 @@ public class Main {
         System.out.println("Is valid BST: " + isValidBST(root, null, null));
     }
 }
+
+
+
+
+
+
+
+import com.sun.jdi.ArrayReference;
+
+import java.util.*;
+
+public class Main {
+    static class Node {
+        int data;
+        Node left;
+        Node right;
+
+        Node(int data) {
+            this.data = data;
+            this.left = null;
+            this.right = null;
+        }
+    }
+
+//    static class Info {
+//        boolean isBST;
+//        int size;
+//        int min;
+//        int max;
+//
+//        Info(boolean isBST, int size, int min, int max) {
+//            {
+//                this.isBST = isBST;
+//                this.size = size;
+//                this.min = min;
+//                this.max = max;
+//            }
+//
+//        }
+//
+//    }
+//    public static int maxBST = 0;
+//
+//    public static Info largestBST(Node root) {
+//        if (root == null) {
+//            return new Info(true, 0, Integer.MAX_VALUE, Integer.MIN_VALUE);
+//        }
+//        Info leftInfo = largestBST(root.left);
+//        Info rightInfo = largestBST(root.right);
+//        int size = leftInfo.size + rightInfo.size+1;
+//        int min = Math.min(root.data, Math.min(leftInfo.min, rightInfo.min));
+//        int max = Math.max(root.data, Math.max(leftInfo.max, rightInfo.max));
+//
+//        if (root.data <= leftInfo.max || root.data >= rightInfo.min) {
+//            return new Info(false, size, min, max);
+//        }
+//        //checking for both the left and right nodes
+//
+//        if (leftInfo.isBST && rightInfo.isBST) {
+//
+//            maxBST = Math.max(maxBST, size);
+//             return new Info(true, size, min, max);
+//        }
+//        return new Info(false,size,min,max);
+//    }
+//
+//
+
+    public static void inOrderSeq(Node root, ArrayList<Integer> inorder){
+        if(root == null){
+            return;
+        }
+        inOrderSeq(root.left,inorder);
+        inorder.add(root.data);
+        inOrderSeq(root.right,inorder);
+
+    }
+    public static Node toBalancedTree(ArrayList<Integer> finalArr,int si,int ei){
+        if(si > ei){
+            return null;
+        }
+        int mid = si+(ei-si)/2;
+        Node root = new Node(finalArr.get(mid));
+        root.left = toBalancedTree(finalArr,si,mid-1);
+        root.right = toBalancedTree(finalArr,mid+1,ei);
+        return root;
+
+
+
+    }
+
+    public static Node MergBST(Node root1,Node root2){
+        ArrayList<Integer> BST1 =  new ArrayList<>();
+        ArrayList<Integer> BST2 =  new ArrayList<>();
+        inOrderSeq(root1,BST1);
+        inOrderSeq(root2,BST2);
+
+        //code for merge;
+        int i = 0; int j = 0;
+        ArrayList<Integer> finalArr = new ArrayList<>();
+        while(i < BST1.size() && j < BST2.size()){
+            if(BST1.get(i) <=BST2.get(j)){
+                finalArr.add(BST1.get(i));
+                i++;
+
+            }else{
+                finalArr.add(BST2.get(j));
+                j++;
+            }
+
+        }
+        while(i <BST1.size()){
+            finalArr.add(BST1.get(i));
+            i++;
+        }
+        while(j < BST2.size()){
+            finalArr.add(BST2.get(j));
+            j++;
+        }
+
+        //sorted ARRAY TO BALANCED TREE..
+        Node root = toBalancedTree(finalArr,0,finalArr.size()-1);
+        return root;
+
+
+
+
+    }
+    public static void preOrder(Node root){
+        if(root == null){
+            return;
+        }
+        System.out.print(root.data + " ");
+        preOrder(root.left);
+        preOrder(root.right);
+    }
+
+    public static void main(String[] args) {
+    //        Node root = new Node(50);
+    //        root.left = new Node(30);
+    //        root.left.left = new Node(5);
+    //        root.left.right = new Node(20);
+    //
+    //        root.right = new Node(60);
+    //        root.right.left = new Node(45);
+    //        root.right.right = new Node(70);
+    //        root.right.right.left = new Node(65);
+    //        root.right.right.right = new Node(80);
+    //
+    //        Info info = largestBST(root);
+    //        System.out.println("largest bst = " + maxBST);
+
+            Node root1 = new Node(2);
+            root1.left = new Node(1);
+            root1.right = new Node(4);
+
+            Node root2 = new Node(9);
+            root2.left = new Node(3);
+            root2.right = new Node(12);
+
+          Node root =   MergBST(root1,root2);
+          preOrder(root);
+
+          // O(n+m)... linear time complixity..
+    }
+
+}
+
+
+
